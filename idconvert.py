@@ -20,8 +20,8 @@
 
 from baseconvert import base
 
-def basep(*args, pad=0, **kwargs): # Converts base AND pads the result.
-    out = base(*args, **kwargs)
+def basep(*args, pad=0, **kwargs):       #  Converts base AND pads the result with
+    out = base(*args, **kwargs)          #  zeroes (on the left side of the number).
     return "0"*(pad-len(out))+out
 
 def getid(ip, tank):
@@ -36,13 +36,13 @@ def getid(ip, tank):
 def fromid(id):
     out = basep(id, 36, 16, string=True, pad=6)
     result = tuple(map(lambda x: "".join(map(lambda y: str(y), base(x, 16, 10, string=True))), (out[2:4], out[4:6], out[0:2])))
-    return ('192.168.'+result[0]+"."+result[1], result[2])
+    return ('192.168.'+result[0]+"."+result[1], int(result[2]))
 
 if __name__ == "__main__":
 
-    # Usage example
+    from random import randint
 
+    # Usage example
     print("getid:\t", getid(ip="192.168.255.255", tank=24))
 
-    print("fromid:\t", fromid("Z473"))
-
+    print("fromid:\t", fromid("Z4EX"))
