@@ -5,7 +5,7 @@
 #
 #    Your IP can range from 192.168.0.0 to 192.168.255.255
 #
-#    Your Tank ID can range from 0 to 24
+#    Your Tank ID can range from 0 to 24 (including 0 and 24)
 #
 #  Examples:
 #
