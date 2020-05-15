@@ -15,6 +15,8 @@
 #
 #    3.  IP 192.168.2.235, TANK 10        =  E297
 #
+#  Usage example at the bottom...
+#
 
 from baseconvert import base
 
@@ -38,7 +40,9 @@ def fromid(id):
 
 if __name__ == "__main__":
 
-    args = ("192.168.2.235", 10)
+    # Usage example
 
-    print(args, " ---> ", getid(*args), ' ---> ', fromid(getid(*args)))
+    print("getid:\t", getid(ip="192.168.255.255", tank=24))
+
+    print("fromid:\t", fromid("Z473"))
 
