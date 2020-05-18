@@ -1,10 +1,9 @@
-import pynet
-from time import sleep
-
-def setup():
-    print("This is run once")
-
-    BIGBOYVARIABLE = 3
+from pynet import *
 
 def loop():
-    print("multiple times")
+    ...
+
+def gunLoop():
+    ...
+
+begin()

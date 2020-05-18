@@ -1,52 +1,61 @@
-import sys
-import inspect
 
-def call_function_get_frame(func, *args, **kwargs):
+from baseconvert import base
+import socket
+from flask import Flask, send_file
+import logging
 
-  frame = None
-  trace = sys.gettrace()
-  def snatch_locals(_frame, name, arg):
-    nonlocal frame
-    if frame is None and name == 'call':
-      frame = _frame
-      sys.settrace(trace)
-    return trace
-  sys.settrace(snatch_locals)
-  try:
-    print(kwargs)
-    result = func(*args, **kwargs)
-  finally:
-    sys.settrace(trace)
-  return frame, result
+def basep(*args, pad=0, **kwargs):       #  Converts base AND pads the result with
+    out = base(*args, **kwargs)          #  zeroes (on the left side of the number).
+    return "0"*(pad-len(out))+out
 
-import types
+def getid(ip, tank):
+    ip1, ip2 = map(int, ip.split('.')[2:])
 
-def namespace_decorator(func):
-  frame, result = call_function_get_frame(func)
-  try:
-    module = types.ModuleType(func.__name__)
-    module.__dict__.update(frame.f_locals)
-    return module
-  finally:
-    del frame
+    return basep(
+              basep(tank, 10, 16, string=True, pad=2) +
+              basep(ip1, 10, 16, string=True, pad=2) +
+              basep(ip2, 10, 16, string=True, pad=2)
+                 , 16, 36, string=True, pad=4)
 
+def fromid(id):
+    out = basep(id, 36, 16, string=True, pad=6)
+    result = tuple(map(lambda x: "".join(map(lambda y: str(y), base(x, 16, 10, string=True))), (out[2:4], out[4:6], out[0:2])))
+    return ('192.168.'+result[0]+"."+result[1], int(result[2]))
 
 if __name__ != "__main__":
-    import atexit
     import __main__
 
-    def on_exit():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("1.1.1.1", 80))
+    localip = s.getsockname()[0]
+    s.close()
+
+    tankid = getid(localip, 0)
+
+    # Flask stuff
+    app = Flask(__name__, static_url_path='')
+    
+    @app.route('/')
+    @app.route('/<file>')
+    def handle(file=None):
+        try:
+            if file == None: file = "index.html"
+            with open("./www/"+file, "r") as f:
+                return f.read()
+        except FileNotFoundError:
+            return '<p>Error 404</p><a href=\"/\">Go back to Home?</a>', 404
+
+    def begin():
+        __main__.loop()
+        __main__.gunLoop()
+
+        print()
+        print("====================================================================\n")
+        print(" TANK:"+str(tankid), "is now fired up!  Go to", "http://localhost:5000", 'to battle!', '\n')
+        print("====================================================================\n")
         
-        kwargs = { key: value for key, value in vars(namespace_decorator(__main__.setup)).items() if key[0] != "_"}
-
-        print(kwargs)
-
-        print(inspect.getargspec(__main__.loop))
-
-        for x in range(5):
-            namespace_decorator(__main__.loop, **kwargs)
+        app.run()
 
 
-    atexit.register(on_exit)
 else:
     print("\nNotice! Please run this by importing the module, inside tank code")
