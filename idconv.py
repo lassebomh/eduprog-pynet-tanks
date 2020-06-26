@@ -9,7 +9,7 @@
 #
 #  Examples:
 #
-#    1.  IP 192.168.255.255, TANK 25      =  Z473
+#    1.  IP 192.168.255.255, TANK 24      =  Z473
 #
 #    2.  IP 192.168.1.1, TANK 0           =  0075
 #
@@ -43,6 +43,6 @@ if __name__ == "__main__":
     from random import randint
 
     # Usage example
-    print("getid:\t", getid(ip="192.168.255.255", tank=24))
+    print("getid:\t", getid(ip="192.168.1.235", tank=8))
 
     print("fromid:\t", fromid("Z4EX"))
